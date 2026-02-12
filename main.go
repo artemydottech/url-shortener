@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type ShortenRequest struct {
@@ -15,6 +17,9 @@ type ShortenRequest struct {
 var storage = NewStorage()
 
 func main() {
+	  if err := godotenv.Load(); err != nil {
+        log.Printf("No .env file found: %v", err)
+    }
     port := getPort()
     
     http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
