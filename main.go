@@ -23,7 +23,7 @@ func main() {
     http.HandleFunc("/api/shorten", shortenHandler)
     http.HandleFunc("/", redirectHandler)
     
-    fmt.Printf("🚀 Server on %s\n", port)
+    fmt.Printf("(!) Сервер запущен на порту %s\n", port)
     log.Fatal(http.ListenAndServe(port, nil))
 }
 
@@ -36,7 +36,7 @@ func getPort() string {
 }
 
 func shortenHandler(w http.ResponseWriter, r *http.Request) {
-    log.Println("POST /api/shorten called") // ДЕБАГ
+    log.Println("POST /api/shorten called") 
     
     if r.Method != "POST" {
         http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
