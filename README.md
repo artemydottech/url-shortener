@@ -1,6 +1,8 @@
 # url-shortener
 
-Небольшой url-shortener сервис, для тестирования необходимо отправить curl запрос формата:
+A small url-shortener service. Solution for the [URL Shortening Service](https://roadmap.sh/projects/url-shortening-service) project from roadmap.sh.
+
+To test it, send a curl request in the following format:
 
 ```
 curl -X POST http://localhost:8080/api/shorten \
@@ -8,9 +10,9 @@ curl -X POST http://localhost:8080/api/shorten \
   -d '{"url": "https://google.com"}'
 ```
 
-Ожидаемый ответ:
+Expected response:
 `{"short_code":"X7kP9m","short_url":"http://localhost:8080/X7kP9m"}`
 
-При переходе на ссылку формата `http://localhost:8080/short_code` ожидается редирект на переданную изначально ссылку
+Visiting a link of the form `http://localhost:8080/short_code` redirects to the original URL.
 
-Также существует поддержка переданного порта в `.env` файле
+A custom port can also be provided via the `.env` file.
