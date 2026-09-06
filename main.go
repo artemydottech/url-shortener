@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -36,7 +37,10 @@ func main() {
 func getPort() string {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = ":8080"
+		return ":8080"
+	}
+	if !strings.HasPrefix(port, ":") {
+		return ":" + port
 	}
 	return port
 }
