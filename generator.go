@@ -5,12 +5,12 @@ import (
 	"encoding/base64"
 )
 
-func generateCode() string {
-	bytes := make([]byte, 6)
-	_, err := rand.Read(bytes)
-	if err != nil {
-		panic(err)
+const codeLength = 6
+
+func generateCode() (string, error) {
+	bytes := make([]byte, codeLength)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
 	}
-	code := base64.RawURLEncoding.EncodeToString(bytes)
-	return code[:6]
+	return base64.RawURLEncoding.EncodeToString(bytes)[:codeLength], nil
 }

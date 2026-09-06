@@ -78,7 +78,13 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	code := generateCode()
+	code, err := generateCode()
+	if err != nil {
+		log.Printf("Code generation failed: %v", err)
+		http.Error(w, "Could not generate a code", http.StatusInternalServerError)
+		return
+	}
+
 	storage.Save(code, req.URL)
 
 	log.Printf("Created code %s for %s", code, req.URL)
