@@ -74,12 +74,21 @@ func reserveCode(url string) (string, error) {
 }
 
 func shortenHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("POST /api/shorten called")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-	if r.Method != "POST" {
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	if r.Method != http.MethodPost {
 		http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	log.Println("POST /api/shorten called")
 
 	var req ShortenRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -103,7 +112,6 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Created code %s for %s", code, req.URL)
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	response := map[string]string{
 		"short_code": code,
