@@ -45,6 +45,19 @@ func getPort() string {
 	return port
 }
 
+// baseURL rebuilds the address the caller reached us on, so the short link
+// works behind a proxy and on a real host, not only on localhost.
+func baseURL(r *http.Request) string {
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	if forwarded := r.Header.Get("X-Forwarded-Proto"); forwarded != "" {
+		scheme = forwarded
+	}
+	return scheme + "://" + r.Host
+}
+
 func shortenHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("POST /api/shorten called")
 
@@ -75,7 +88,7 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 
 	response := map[string]string{
 		"short_code": code,
-		"short_url":  fmt.Sprintf("http://localhost%s/%s", getPort(), code),
+		"short_url":  fmt.Sprintf("%s/%s", baseURL(r), code),
 	}
 	json.NewEncoder(w).Encode(response)
 }
