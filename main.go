@@ -58,6 +58,21 @@ func baseURL(r *http.Request) string {
 	return scheme + "://" + r.Host
 }
 
+const reserveAttempts = 5
+
+func reserveCode(url string) (string, error) {
+	for attempt := 0; attempt < reserveAttempts; attempt++ {
+		code, err := generateCode()
+		if err != nil {
+			return "", err
+		}
+		if storage.Save(code, url) {
+			return code, nil
+		}
+	}
+	return "", fmt.Errorf("no free code after %d attempts", reserveAttempts)
+}
+
 func shortenHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("POST /api/shorten called")
 
@@ -78,14 +93,12 @@ func shortenHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	code, err := generateCode()
+	code, err := reserveCode(req.URL)
 	if err != nil {
 		log.Printf("Code generation failed: %v", err)
 		http.Error(w, "Could not generate a code", http.StatusInternalServerError)
 		return
 	}
-
-	storage.Save(code, req.URL)
 
 	log.Printf("Created code %s for %s", code, req.URL)
 

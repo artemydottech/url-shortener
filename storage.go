@@ -13,10 +13,16 @@ func NewStorage() *URLStorage {
 	}
 }
 
-func (s *URLStorage) Save(code, url string) {
+// Save stores the pair and reports whether the code was free. Overwriting a
+// taken code would silently repoint somebody else's existing short link.
+func (s *URLStorage) Save(code, url string) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if _, taken := s.urls[code]; taken {
+		return false
+	}
 	s.urls[code] = url
+	return true
 }
 
 func (s *URLStorage) Get(code string) (string, bool) {
