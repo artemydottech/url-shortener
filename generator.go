@@ -6,11 +6,11 @@ import (
 )
 
 func generateCode() string {
-    bytes := make([]byte, 6) 
-    _, err := rand.Read(bytes)
-    if err != nil {
-        panic(err)  
-    }
-    code := base64.RawURLEncoding.EncodeToString(bytes)
-    return code[:6] 
+	bytes := make([]byte, 6)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		panic(err)
+	}
+	code := base64.RawURLEncoding.EncodeToString(bytes)
+	return code[:6]
 }
